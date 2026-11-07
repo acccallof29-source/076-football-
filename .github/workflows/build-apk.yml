@@ -90,7 +90,7 @@ jobs:
         run: |
           godot --headless --path . --editor --quit
           mkdir -p build
-          godot --headless --path . --export-debug "Android" build/football-touch.apk
+          godot --headless --path . --export-debug "Android" build/football-touch.apk --verbose
 
       - uses: actions/upload-artifact@v4
         with:
