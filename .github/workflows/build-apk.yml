@@ -44,15 +44,40 @@ jobs:
           echo "$HOME/android-sdk/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
           echo "$HOME/android-sdk/platform-tools" >> "$GITHUB_PATH"
 
-          yes | "$HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$HOME/android-sdk" --licenses >/dev/null
+          yes | "$HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$HOME/android-sdk" --licenses >/dev/null || true
 
           "$HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$HOME/android-sdk" \
             "platform-tools" \
-            "platforms;android-34" \
-            "build-tools;34.0.0" \
+            "platforms;android-35" \
+            "build-tools;35.0.0" \
             "cmdline-tools;latest" \
             "cmake;3.10.2.4988404" \
             "ndk;23.2.8568313"
+
+      - name: Configure Godot Android settings
+        run: |
+          mkdir -p "$HOME/.config/godot" "$HOME/.android"
+
+          keytool -genkeypair -v \
+            -keystore "$HOME/.android/debug.keystore" \
+            -storepass android \
+            -alias androiddebugkey \
+            -keypass android \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -dname "CN=Android Debug,O=Android,C=US"
+
+          cat > "$HOME/.config/godot/editor_settings-4.tres" <<SETTINGS
+          [gd_resource type="EditorSettings" format=3]
+
+          [resource]
+          export/android/java_sdk_path = "$JAVA_HOME"
+          export/android/android_sdk_path = "$ANDROID_HOME"
+          export/android/debug_keystore = "$HOME/.android/debug.keystore"
+          export/android/debug_keystore_user = "androiddebugkey"
+          export/android/debug_keystore_pass = "android"
+          SETTINGS
 
       - name: Check Android SDK
         run: |
