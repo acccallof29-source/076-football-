@@ -218,7 +218,7 @@ func _switch_player() -> void:
 func _input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
 		if event.pressed:
-			var pos := event.position
+			var pos: Vector2 = event.position
 			if pos.x < get_viewport_rect().size.x * 0.48 and pos.y > 260:
 				joystick_id = event.index
 				joystick_origin = pos
